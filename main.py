@@ -1,29 +1,21 @@
 from config import Config
 from notion import Notion
-from borlovio import Bor
+from bor import BorLoVio
 
 config = Config()
 
 notion = Notion(config.SECRET_KEY, config.NOTION_VERSION)
-bor = Bor(notion.database(config.DATABASE_ID))
+borlovio = BorLoVio(notion.database(config.DATABASE_ID))
+
+if __name__ == "__main__":
+    print("Hola!")
 
 while __name__ == "__main__":
-    print("Qué te gustaría saber si vi?")
+    print("\nQué te gustaría saber si vi?")
     x = input(":")
 
     if x == "":
-        print("Bye!")
+        print("\nBye!")
         break
 
-    status = bor.status(x)
-
-    if status == "Completed":
-        print("Si, vi", x, ":D")
-    elif status == "In progress":
-        print("Estoy viendo", x, ":)")
-    elif status == "Not started":
-        print("No vi", x, ", pero la tengo pendiente :)")
-    else:
-        print("No, no vi", x, ":(")
-
-    print("")
+    print(borlovio.answer_for(x))
