@@ -1,25 +1,30 @@
+from abc import ABC, abstractmethod
 import requests
 
-
-class NotionObject:
-    OBJECT = ""
-
+class NotionObject(ABC):
     def __init__(self, headers, id):
         self.headers = headers
         self.id = id
+
+    @property
+    @abstractmethod
+    def origin(self):
+        pass
 
     def get(self):
         return self.request("get", self.url())
 
     def url(self, endpoint=""):
-        return f"https://api.notion.com/v1/{self.OBJECT}/{self.id}" + endpoint
+        return f"https://api.notion.com/v1/{self.origin}/{self.id}" + endpoint
 
     def request(self, method, url, **kwargs):
         return requests.request(method, url, headers=self.headers, **kwargs)
 
 
 class NotionDatabase(NotionObject):
-    OBJECT = "databases"
+    @property
+    def origin(self):
+        return "databases"
 
     def query(self, body):
         return self.request("post", self.url("/query"), json=body)
@@ -32,7 +37,9 @@ class NotionDatabase(NotionObject):
 
 
 class NotionPage(NotionObject):
-    OBJECT = "pages"
+    @property
+    def origin(self):
+        return "pages"
 
     def create(self, body):
         return self.request("post", self.url(), json=body)
@@ -42,7 +49,9 @@ class NotionPage(NotionObject):
 
 
 class NotionBlock(NotionObject):
-    OBJECT = "blocks"
+    @property
+    def origin(self):
+        return "blocks"
 
     def children(self, query):
         return self.request("get", self.url("/children"), params=query)
@@ -55,7 +64,9 @@ class NotionBlock(NotionObject):
 
 
 class NotionUser(NotionObject):
-    OBJECT = "users"
+    @property
+    def origin(self):
+        return "users"
 
     def list(self, query):
         return self.request("get", self.url(), params=query)

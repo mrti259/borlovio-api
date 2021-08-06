@@ -2,19 +2,19 @@ class Bor:
     def __init__(self, database):
         self.database = database
 
-    def status_for(self, media, res):
+    def status_for(self, media, blv):
         response = self.query(media)
 
         if "Completed" in response:
-            return res.has_seen(media)
+            return blv.has_seen(media)
         
         if "In progress" in response:
-            return res.is_watching(media)
+            return blv.is_watching(media)
         
         if "Not started" in response:
-            return res.wants_to_watch(media)
+            return blv.wants_to_watch(media)
         
-        return res.does_not_know(media) 
+        return blv.does_not_know(media) 
     
     def request(self, media):
         return self.database.query({

@@ -1,1 +1,1 @@
-from .borlovio import BorLoVio
+from .borlovio import BLV, BorLoVio
