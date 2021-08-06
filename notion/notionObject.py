@@ -1,5 +1,6 @@
 import requests
 
+
 class NotionObject:
     OBJECT = ""
 
@@ -16,38 +17,45 @@ class NotionObject:
     def request(self, method, url, **kwargs):
         return requests.request(method, url, headers=self.headers, **kwargs)
 
+
 class NotionDatabase(NotionObject):
     OBJECT = "databases"
 
-    def query(self, params):
-        return self.request("post", self.url("/query"), params)
+    def query(self, body):
+        return self.request("post", self.url("/query"), json=body)
 
-    def list(self, params):
-        return self.request("get", self.url(), params)
+    def list(self, query):
+        return self.request("get", self.url(), params=query)
 
-    def create(self, params):
-        return self.request("post", self.url(), params)
+    def create(self, body):
+        return self.request("post", self.url(), json=body)
+
 
 class NotionPage(NotionObject):
     OBJECT = "pages"
 
-    def create(self, params):
-        return self.request("post", self.url(), params)
+    def create(self, body):
+        return self.request("post", self.url(), json=body)
 
-    def update(self, params):
-        return self.request("patch", self.url(), params)
+    def update(self, body):
+        return self.request("patch", self.url(), json=body)
+
 
 class NotionBlock(NotionObject):
     OBJECT = "blocks"
 
-    def get(self):
-        return self.request("get", self.url("/children"))
+    def children(self, query):
+        return self.request("get", self.url("/children"), params=query)
     
-    def append(self, params):
-        return self.request("patch", self.url("/children"), params)
+    def update(self, body):
+        return self.request("patch", self.url(), json=body)
+
+    def append(self, body):
+        return self.request("patch", self.url("/children"), json=body)
+
 
 class NotionUser(NotionObject):
     OBJECT = "users"
-    
-    def list(self, params):
-        return self.request("get", self.url(), params)
+
+    def list(self, query):
+        return self.request("get", self.url(), params=query)
