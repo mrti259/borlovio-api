@@ -1,4 +1,3 @@
-import dotenv
 import os
 from notion import Notion
 
