@@ -7,22 +7,32 @@ class Bor:
 
         if "Completed" in response:
             return blv.has_seen(media)
-        
+
         if "In progress" in response:
             return blv.is_watching(media)
-        
+
         if "Not started" in response:
             return blv.wants_to_watch(media)
-        
-        return blv.does_not_know(media) 
-    
+
+        return blv.does_not_know(media)
+
     def request(self, media):
         return self.database.query({
             "filter": {
-                "property": "title",
-                "text": {
-                    "equals": media
-                }
+                "and": [
+                    {
+                        "property": "title",
+                        "text": {
+                            "equals": media
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "is_not_empty": True
+                        }
+                    }
+                ]
             }
         })
 
@@ -31,5 +41,5 @@ class Bor:
 
         if response.status_code != 200:
             return []
-        
+
         return [r["properties"]["Status"]["select"]["name"] for r in response.json()["results"]]
