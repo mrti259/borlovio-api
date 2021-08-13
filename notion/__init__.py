@@ -1,1 +1,1 @@
-from .notion import Notion
+from .notionConnection import NotionConnection
