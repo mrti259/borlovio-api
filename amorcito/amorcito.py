@@ -50,7 +50,7 @@ class Amorcito:
             }
         })
 
-    def marcarCompra(self, name):
+    def marcar_compra(self, name):
         res = self._connection.database(self._database_id("Compras")).query({
             "filter": {
                 "and": [
@@ -80,7 +80,7 @@ class Amorcito:
             }
         })
 
-    def verComprasPendientes(self, lista):
+    def ver_compras_pendientes(self, lista):
         res = self._connection.database(self._database_id("Compras")).query({
             "filter": {
                 "and": [
@@ -107,7 +107,7 @@ class Amorcito:
 
         return compras
 
-    def agregarGasto(self, name, amount, paid):
+    def agregar_gasto(self, name, amount, paid):
         return self._connection.page().create({
             "parent": {
                 "database_id": self._database_id("Gastos compartidos")
