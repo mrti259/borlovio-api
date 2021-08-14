@@ -36,7 +36,7 @@ class NotionDatabase(NotionObject):
         return self._request("post", self._url("/query"), json=body)
 
     def list(self, query={}):
-        return self._request("get", self._url(), params=query)
+        return self._request("get", super()._url(), params=query)
 
     def create(self, body):
         return self._request("post", self._url(), json=body)
@@ -74,7 +74,7 @@ class NotionUser(NotionObject):
     def _origin(self):
         return "users"
 
-    def list(self, query):
+    def list(self, query={}):
         return self._request("get", self._url(), params=query)
 
 class NotionSearch(NotionDocument):

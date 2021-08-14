@@ -1,7 +1,9 @@
+from notion import NotionConnection
 import os
-from notion import Notion
+import dotenv
+
+dotenv.load_dotenv()
 
 class Config:
-    def database(self):
-        notion = Notion(os.environ.get("NOTION_SECRET_KEY"), os.environ.get("NOTION_VERSION"))
-        return notion.database(os.environ.get("NOTION_DATABASE_ID"))
+    def connection(self):
+        return NotionConnection(os.environ.get("NOTION_SECRET_KEY"), "2021-07-27")
