@@ -1,6 +1,5 @@
 from config import Config
-from amorcito import Amorcito
-import json
+from amorcito import AmorcitoBot
 
 config = Config()
-amorcito = Amorcito(config.connection())
+bot = AmorcitoBot(config.connection(), config.bot())
