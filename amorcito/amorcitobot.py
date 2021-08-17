@@ -31,6 +31,7 @@ class AmorcitoBot:
             markup.add(
                 types.KeyboardButton("Ver"),
                 types.KeyboardButton("Agregar"),
+                types.KeyboardButton("Cancelar")
             )
             self._send_message(message, "Qué queres hacer con los gastos", reply_markup=markup)
             self._bot.register_next_step_handler_by_chat_id(message.chat.id, self._gastos_action)
@@ -55,6 +56,10 @@ class AmorcitoBot:
         )
         self._send_message(message, f"Qué querés ver?", reply_markup=markup)
 
+    def _cancel(self, message):
+        self._user_dict[message.chat.id] = {}
+        self._default(message)
+
     def _successed(self, message):
         self._send_message(message, "Listo!")
         self._default(message)
@@ -72,6 +77,7 @@ class AmorcitoBot:
         markup.add(
             types.KeyboardButton("Agregar"),
             types.KeyboardButton("Marcar"),
+            types.KeyboardButton("Cancelar")
         )
         self._send_message(message, "Qué querés hacer con la lista?", reply_markup=markup)
         self._bot.register_next_step_handler_by_chat_id(message.chat.id, self._compras_action)
@@ -88,6 +94,9 @@ class AmorcitoBot:
             markup.add(*items)
             self._send_message(message, "Qué compra hiciste?", reply_markup=markup)
             self._bot.register_next_step_handler_by_chat_id(message.chat.id, self._compras_marcar)
+
+        if "Cancelar" in message.text:
+            self._cancel(message)
 
     def _compras_ver(self, message):
         res = self._amorcito.ver_compras_pendientes(**self._user_dict[message.chat.id])
@@ -117,6 +126,9 @@ class AmorcitoBot:
             self._send_message(message, "Qué gasto te gustaría agregar?")
             self._bot.register_next_step_handler_by_chat_id(message.chat.id, self._gastos_agregar_name)
 
+        if "Cancelar" in message.text:
+            self._cancel(message)
+
     def _gastos_agregar_name(self, message):
         self._user_dict[message.chat.id] = {
             "name": message.text
@@ -134,5 +146,5 @@ class AmorcitoBot:
 
     def _gastos_agregar_paid(self, message):
         self._user_dict[message.chat.id]["paid"] = message.text
-        res = self._amorcito.agregar_gasto(**self._user_dict[message.chat.id])
+        self._amorcito.agregar_gasto(**self._user_dict[message.chat.id])
         self._successed(message)

@@ -1,5 +1,5 @@
 from flask import Flask, request
-import telebot
+from telebot import types
 
 class Webhook:
     def __init__(self, url, port):
@@ -23,7 +23,7 @@ class Server:
         @self._server.route('/' + self._bot.token, methods=['POST'])
         def getMessage():
             json_string = request.get_data().decode('utf-8')
-            update = telebot.types.Update.de_json(json_string)
+            update = types.Update.de_json(json_string)
             self._bot.process_new_updates([update])
             return "!", 200
 

@@ -14,4 +14,5 @@ class Config:
         return telebot.TeleBot(os.environ.get("TELEGRAM_BOT_TOKEN"))
 
     def webhook(self):
-        return Webhook(os.environ.get("URL"), os.environ.get("PORT"))
+        if "URL" in os.environ:
+            return Webhook(os.environ.get("URL"), os.environ.get("PORT"))
