@@ -1,87 +1,29 @@
+from .amorcitoObject import *
+import dateutil.parser as dparser
+from datetime import datetime
+
 class Amorcito:
     def __init__(self, connection):
-        self._connection = connection
-        self._databases_id = []
-        self._connect()
-
-    def _connect(self):
-        res = self._connection.search({
-            "filter": {
-                "property": "object",
-                "value": "database"
-            }
-        })
-
-        self._databases_id = {}
-
-        for r in res.json()["results"]:
-            self._databases_id[r["title"][0]["text"]["content"]] = r["id"]
-
-    def _users(self):
-        return self._connection.user().list()
-
-    def _database_id(self, name):
-        return self._databases_id.get(name)
+        self._compras = AmorcitoCompras(connection)
+        self._gastos = AmorcitoGastos(connection)
+        self._usuarios = AmorcitoUsuarios(connection)
 
     def agregar_compra(self, name, list):
-        return self._connection.page().create({
-            "parent": {
-                "database_id": self._database_id("Compras")
-            },
-            "properties": {
-                "List": {
-                    "select": {
-                        "name": list
-                    }
-                },
-                "Done": {
-                    "checkbox": False
-                },
-                "Name": {
-                    "title": [
-                        {
-                            "type": "text",
-                            "text": {
-                                "content": name
-                            }
-                        }
-                    ]
-                }
-            }
+        return self._compras.create({
+            "name": name,
+            "list": list
         })
 
-    def marcar_compra(self, name):
-        res = self._connection.database(self._database_id("Compras")).query({
-            "filter": {
-                "and": [
-                    {
-                        "property": "Done",
-                        "checkbox": {
-                            "equals": False
-                        }
-                    },
-                    {
-                        "property": "Name",
-                        "title": {
-                            "equals": name
-                        }
-                    }
-                ]
-            }
+    def marcar_compra(self, page_id):
+        return self._compras.update(page_id, {
+            "done": True
         })
 
-        _ids = [r["id"] for r in res.json()["results"]]
+    def ver_listas(self):
+        return self._compras.lists()
 
-        return self._connection.page(_ids[0]).update({
-            "properties": {
-                "Done": {
-                    "checkbox": True
-                }
-            }
-        })
-
-    def ver_compras_pendientes(self, lista):
-        res = self._connection.database(self._database_id("Compras")).query({
+    def ver_compras_pendientes(self, list):
+        res = self._compras.query({
             "filter": {
                 "and": [
                     {
@@ -93,49 +35,59 @@ class Amorcito:
                     {
                         "property": "List",
                         "select": {
-                            "equals": lista
+                            "equals": list
                         }
                     }
                 ]
             }
         })
 
-        compras = []
+        compras = {}
 
         for r in res.json()["results"]:
-            compras.append(r["properties"]["Name"]["title"][0]["text"]["content"])
+            compras[r["properties"]["Name"]["title"][0]["text"]["content"]] = r["id"]
 
         return compras
 
     def agregar_gasto(self, name, amount, paid):
-        return self._connection.page().create({
-            "parent": {
-                "database_id": self._database_id("Gastos compartidos")
-            },
-            "properties": {
-                "Name": {
-                    "title": [
-                        {
-                            "type": "text",
-                            "text": {
-                                "content": name
-                            }
-                        }
-                    ]
-                },
-                "Amount": {
-                    "number": amount
-                },
-                #"Paid": {"people": []}
-            }
+        return self._gastos.create({
+            "name": name,
+            "amount": amount,
+            "paid": paid
         })
 
     def ver_gastos(self):
-        res = self._connection.database(self._database_id("Gastos compartidos")).query({})
+        res = self._gastos.query({})
 
         gastos = []
 
         for r in res.json()["results"]:
-            gastos.append(r["properties"]["Name"]["title"][0]["text"]["content"])
+            gasto = {
+                "name": r["properties"]["Name"]["title"][0]["text"]["content"],
+                "amount": r["properties"]["Amount"]["number"],
+                "paid": r["properties"]["Paid"]["select"]["name"],
+                "date": dparser.parse(r["properties"]["Date"]["created_time"]).strftime("%d/%m/%Y")
+            }
+            gastos.append(gasto)
 
         return gastos
+
+    def ver_personas(self):
+        return self._gastos.people()
+
+    def agregar_usuario(self, name, cid):
+        return self._usuarios.create({
+            "name": name,
+            "chat_id": cid
+        })
+
+    def buscar_usuario(self, chat_id):
+        res = self._usuarios.query({
+            "filter": {
+                "property": "chat_id",
+                "text": {
+                    "equals": chat_id
+                }
+            }
+        }).json()
+        return res["results"]

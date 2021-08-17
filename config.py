@@ -1,4 +1,5 @@
 from notion import NotionConnection
+from server import Webhook
 import os
 import dotenv
 import telebot
@@ -11,3 +12,6 @@ class Config:
 
     def bot(self):
         return telebot.TeleBot(os.environ.get("TELEGRAM_BOT_TOKEN"))
+
+    def webhook(self):
+        return Webhook(os.environ.get("URL"), os.environ.get("PORT"))
