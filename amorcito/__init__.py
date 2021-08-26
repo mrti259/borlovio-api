@@ -1,19 +1,20 @@
 class Amorcito:
     def __init__(self):
         self.clear_active_users()
-        self.on_action = {
+        self.actions = {
             "forbidden": self.forbidden,
             "start": self.start,
+            "": self.default
         }
 
     def clear_active_users(self):
         self._active_users = {}
 
-    def load_actions(self, actions):
-        self._actions = actions
+    def load_actions(self, new_actions):
+        self.actions.update(new_actions)
 
-    def is_user_active(self, id):
-        return id in self._active_users
+    def is_user_active(self, user_id):
+        return user_id in self._active_users
 
     def sign_in(self, user_id, auth=False, action="forbidden"):
         self._active_users[user_id] = {"auth": auth, "action": action}
@@ -25,13 +26,22 @@ class Amorcito:
         return self.sign_in(user_id, auth=True, action="start")
 
     def ask_for_input(self, user_id):
-        return self.on_action[self._active_users[user_id]["action"]](user_id)
+        if not self.is_user_active(user_id):
+            self.sign_in(user_id)
+        return self.actions[self._active_users[user_id]["action"]]
 
     def reply_for(self, user_id, action):
-        return self._actions[action](user_id)
+        if not self.is_user_active(user_id):
+            self.sign_in(user_id)
+        if not action in self.actions:
+            action = ""
+        return self.actions[action]
 
-    def forbidden(self, user_id):
-        return "No estas autorizado"
+    def forbidden(self, *args):
+        pass
 
-    def start(self, user_id):
-        return "Hola!"
+    def start(self, *args):
+        pass
+
+    def default(self, *args):
+        pass
