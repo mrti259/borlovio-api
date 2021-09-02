@@ -3,8 +3,8 @@ load_dotenv()
 
 import os
 import notion_client
-import telegrambot
-import amorcito
+import bot
+import xbot
 
 class Config:
     def notion(self):
@@ -17,8 +17,8 @@ class Config:
                 "port": int(os.environ.get("PORT"), 5000)
             }
 
-    def tb(self, bot, webhook=None):
-        return telegrambot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook)
+    def bot(self, connection):
+        return bot.AmorcitoBot(connection)
 
-    def amorcito(self):
-        return amorcito.Amorcito()
+    def tb(self, bot, webhook=None):
+        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook)

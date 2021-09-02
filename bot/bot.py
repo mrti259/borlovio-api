@@ -1,10 +1,10 @@
-class Amorcito:
+class Bot:
     def __init__(self):
         self.clear_active_users()
         self.actions = {
-            "forbidden": self.forbidden,
+            "": self.default,
             "start": self.start,
-            "": self.default
+            "forbidden": self.forbidden,
         }
 
     def clear_active_users(self):
@@ -24,6 +24,11 @@ class Amorcito:
 
     def load_user(self, user_id):
         return self.sign_in(user_id, auth=True, action="start")
+
+    def update_user_action(self, user_id, action=None):
+        if not action:
+            return self._active_users[user_id]["action"]
+        self._active_users[user_id]["action"] = action
 
     def ask_for_input(self, user_id):
         if not self.is_user_active(user_id):

@@ -1,7 +1,9 @@
 import telebot
+
+from .xbot import XBot
 from .webhook import Webhook
 
-class TelegramBot:
+class TelegramBot(XBot):
     def __init__(self, bot, token, webhook=None):
         self._telebot = telebot.TeleBot(token)
         self._register_services(bot)
@@ -48,6 +50,6 @@ class TelegramBot:
         self._telebot.register_next_step_handler_by_chat_id(chat_id, next_step_handler)
 
     def send_message_with_options_and_next_step_handler(self, chat_id, text, options, next_step_handler):
-        markup = telebot.types.ReplyKeyboardMarkup()
+        markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add(*list(map(lambda x: telebot.types.KeyboardButton(x), options)))
         self.send_message_with_next_step_handler(chat_id, text, next_step_handler, reply_markup=markup)
