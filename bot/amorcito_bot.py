@@ -21,11 +21,15 @@ class AmorcitoBot(Bot):
     def load_user(self, user_id):
         return self.schemas.users.get(user_id)
 
-    def save_user(self, user_id):
-        return self.schemas.users.save(self._active_users[user_id])
+    def save_user(self, user):
+        return self.schemas.users.create(self.schemas.users.page(**user))
 
     def on(self, command, message, xbot):
         user_id = message.chat.id
         if not self.is_user_active(user_id):
-            self.sign_in(**self.load_user(user_id))
+            user = self.load_user(user_id)
+            if not user["name"]:
+                user["name"] = message.from_user.full_name
+                self.save_user(user)
+            self.sign_in(**user)
         self.reply_for(user_id, command)(user_id, message, xbot)

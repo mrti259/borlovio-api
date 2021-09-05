@@ -16,8 +16,8 @@ class Bot:
     def is_user_active(self, user_id):
         return user_id in self._active_users
 
-    def sign_in(self, user_id, auth=False, action="forbidden"):
-        self._active_users[user_id] = {"auth": auth, "action": action}
+    def sign_in(self, user_id, auth=False, action="forbidden", name=""):
+        self._active_users[user_id] = {"auth": auth, "action": action, name:""}
 
     def is_user_authorize(self, user_id):
         return self.is_user_active(user_id) and self._active_users[user_id]["auth"] is True

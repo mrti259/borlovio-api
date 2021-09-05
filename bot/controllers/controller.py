@@ -21,8 +21,6 @@ class Controller(ABC):
 
     def exito(self, user_id, message, xbot):
         xbot.send_message(user_id, "Listo!")
-        self._bot.default(user_id, message, xbot)
 
     def fallo(self, user_id, message, xbot):
         xbot.send_message(user_id, "No se pudo completar la acción")
-        self._bot.default(user_id, message, xbot)
