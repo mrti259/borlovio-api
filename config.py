@@ -20,5 +20,5 @@ class Config:
     def bot(self, connection):
         return bot.AmorcitoBot(connection)
 
-    def tb(self, bot, webhook=None):
-        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook)
+    def tb(self, bot, webhook_config=None):
+        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook_config)
