@@ -14,7 +14,7 @@ class Config:
         if "URL" in os.environ:
             return {
                 "url": os.environ.get("URL"),
-                "port": int(os.environ.get("PORT"), 5000)
+                "port": int(os.environ.get("PORT", 5000))
             }
 
     def bot(self, connection):
