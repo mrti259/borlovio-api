@@ -1,18 +1,24 @@
-from notion import NotionConnection
-from server import Webhook
-import os
-import dotenv
-import telebot
+from dotenv import load_dotenv
+load_dotenv()
 
-dotenv.load_dotenv()
+import os
+import notion_client
+import bot
+import xbot
 
 class Config:
-    def connection(self):
-        return NotionConnection(os.environ.get("NOTION_SECRET_KEY"), os.environ.get("NOTION_VERSION"))
-
-    def bot(self):
-        return telebot.TeleBot(os.environ.get("TELEGRAM_BOT_TOKEN"))
+    def notion(self):
+        return notion_client.Client(auth=os.environ.get("NOTION_SECRET_KEY"))
 
     def webhook(self):
         if "URL" in os.environ:
-            return Webhook(os.environ.get("URL"), os.environ.get("PORT"))
+            return {
+                "url": os.environ.get("URL"),
+                "port": int(os.environ.get("PORT"), 5000)
+            }
+
+    def bot(self, connection):
+        return bot.AmorcitoBot(connection)
+
+    def tb(self, bot, webhook=None):
+        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook)
