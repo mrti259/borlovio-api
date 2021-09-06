@@ -38,7 +38,7 @@ class User(Model):
 
     @action.setter
     def action(self, _action):
-        self.properties.update({"action": {"select": {"content": _action}}})
+        self.properties.update({"action": {"select": {"name": _action}}})
 
 
 class UserSchema(Schema):
