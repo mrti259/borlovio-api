@@ -29,7 +29,7 @@ class TelegramBot(XBot):
         if not webhook:
             self._telebot.polling()
         else:
-            webhook.run_for(self)
+            webhook.run_for(self, self._telebot.token)
 
     def set_webhook(self, url):
         self._telebot.remove_webhook()

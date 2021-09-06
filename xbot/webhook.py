@@ -5,8 +5,8 @@ class Webhook:
         self._config = config
         self._server = Flask(__name__)
 
-    def run_for(self, bot):
-        @self._server.route('/' + bot.token, methods=['POST'])
+    def run_for(self, bot, token):
+        @self._server.route('/' + token, methods=['POST'])
         def get_message():
             json_string = request.get_data().decode('utf-8')
             return bot.process_new_updates(json_string)
