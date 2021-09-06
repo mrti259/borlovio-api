@@ -12,13 +12,13 @@ class Config:
 
     def webhook(self):
         if "URL" in os.environ:
-            return {
+            return xbot.Webhook({
                 "url": os.environ.get("URL"),
                 "port": int(os.environ.get("PORT", 5000))
-            }
+            })
 
     def bot(self, connection):
         return bot.AmorcitoBot(connection)
 
-    def tb(self, bot, webhook_config=None):
-        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook_config)
+    def tb(self, bot, webhook=None):
+        return xbot.TelegramBot(bot, os.environ.get("TELEGRAM_BOT_TOKEN"), webhook)

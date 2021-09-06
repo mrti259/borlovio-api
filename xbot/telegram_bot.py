@@ -1,13 +1,12 @@
 import telebot
 
 from .xbot import XBot
-from .webhook import Webhook
 
 class TelegramBot(XBot):
-    def __init__(self, bot, token, webhook_config=None):
+    def __init__(self, bot, token, webhook=None):
         self._telebot = telebot.TeleBot(token)
         self._register_services(bot)
-        self._run(webhook_config)
+        self._run(webhook)
 
     def _register_services(self, bot):
         @self._telebot.message_handler(commands=["start"])
@@ -30,7 +29,7 @@ class TelegramBot(XBot):
         if not webhook:
             self._telebot.polling()
         else:
-            Webhook(webhook)
+            webhook.run_for(self)
 
     def set_webhook(self, url):
         self._telebot.remove_webhook()
